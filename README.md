@@ -18,8 +18,8 @@ Features include:
   
 "Padenti" is the word in Sardinian language (in its variant of the Mogoro village) for "Forest".
 
-## Dependencies and installation
-###Dependencies
+## Dependences and installation
+### Dependences
 - A GNU Linux system
 - An OpenCL environment from either Nvidia or AMD
 - A CPU with SS2 instructions support
@@ -28,15 +28,21 @@ Features include:
 - cmake (for compilation and installation)
 - Doxygen (for documentation generation)
 
-###Compilation and installation
+### Compilation and installation
 ```
 git clone https://github.com/mUogoro/padenti.git padenti
 cd padenti
 mkdir build && cd build
-# The flag -DNVIDIA=True is mandatory for Nvidia OpenCL implementation support
-cmake -DNVIDIA=True ..
+cmake ..
 make && make doc && make install
 ```
 
-For more information about library usage and a small tutorial please consult the
-[Doxygen documentation](http://muogoro.github.io/padenti).
+### Test
+
+Download the dataset from `http://cims.nyu.edu/~tompson/NYU_Hand_Pose_Dataset.htm#download` (warning: 92 GB). Then launch:
+```
+python process_dataset.py DATASET_PATH OUT_PATH
+```
+where DATASET_PATH is the directory containing the original dataset images, while OUT_PATH is the processed dataset destination path. After the script execution ends, OUT_PATH contains two folders (train and test) where the processed images of the training set and the test set are stored.
+
+For more information about library usage and a small tutorial please consult the [Doxygen documentation](http://muogoro.github.io/padenti).

@@ -17,29 +17,28 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>
 ###############################################################################
 
-cmake_minimum_required (VERSION 2.8)
+cmake_minimum_required(VERSION 2.8)
 
-project (Padenti)
+project(Padenti)
 set(Padenti_VERSION_MAJOR 0)
 set(Padenti_VERSION_MINOR 1)
 
 configure_file("${PROJECT_SOURCE_DIR}/src/padenti/padenti.hpp.in"
                "${PROJECT_BINARY_DIR}/src/padenti/padenti.hpp")
 
+# custom path for Find modules
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/cmake")
+
 add_definitions(-DBOOST_ALL_DYN_LINK)
 find_package(OpenCV REQUIRED)
 find_package(Boost COMPONENTS random filesystem system timer chrono log REQUIRED)
+find_package(OpenCL REQUIRED)
 
-execute_process(COMMAND mkdir kernels)
-execute_process(COMMAND mkdir kernels/padenti)
-execute_process(COMMAND ${PROJECT_SOURCE_DIR}/script/ksrc_to_hex.sh ${PROJECT_SOURCE_DIR}/src/padenti/kernels ${PROJECT_BINARY_DIR}/kernels/padenti)
-
-if (NVIDIA)
-  if (NVIDIA MATCHES "True")
-    set(Padenti_OPENCL_INCLUDE_DIR ${CMAKE_INSTALL_PREFIX}/include/padenti/nvidia_opencl_headers)
-    install(DIRECTORY nvidia_opencl_headers DESTINATION include/padenti)
-  endif (NVIDIA MATCHES "True")
-endif (NVIDIA)
+execute_process(COMMAND mkdir -p kernels)
+execute_process(COMMAND mkdir -p kernels/padenti)
+execute_process(COMMAND ${PROJECT_SOURCE_DIR}/script/ksrc_to_hex.sh 
+                        ${PROJECT_SOURCE_DIR}/src/padenti/kernels
+                        ${PROJECT_BINARY_DIR}/kernels/padenti)
 
 get_filename_component(Padenti_INSTALL_DIR ${CMAKE_INSTALL_PREFIX} ABSOLUTE)
 configure_file("${PROJECT_SOURCE_DIR}/PadentiConfig.cmake.in"
@@ -48,6 +47,7 @@ install(FILES ${PROJECT_BINARY_DIR}/PadentiConfig.cmake DESTINATION share/padent
 
 file(GLOB HEADER_FILES src/padenti/*.hpp)
 install(FILES ${HEADER_FILES} DESTINATION include/padenti)
+install(FILES src/3rd_party/CL/cl.hpp DESTINATION include/CL)
 
 file(GLOB KERNEL_FILES "${PROJECT_BINARY_DIR}/kernels/padenti/*.inc")
 install(FILES ${KERNEL_FILES} DESTINATION include/padenti)

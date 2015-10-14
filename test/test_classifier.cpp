@@ -20,15 +20,13 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 
-#include <padenti/image.hpp>
-#include <padenti/tree.hpp>
 #include <padenti/cl_classifier.hpp>
 #include <padenti/cv_image_loader.hpp>
 
 
 static const unsigned char RGB2LABEL[][3] ={
   {255, 0, 0},      // hand
-  {0, 0, 255}     // body
+  {0, 0, 255}       // body
 };
 static const size_t N_LABELS = sizeof(RGB2LABEL)/(sizeof(unsigned char)*3);
 
@@ -42,8 +40,14 @@ typedef CLClassifier<unsigned short, 1, short, 2, N_LABELS> ClassifierT;
 
 #define USE_CPU (false)
 
-int main(int argc, char *argv[])
+int main(int argc, char * argv[])
 {
+  if (argc <=1) {
+    std::cout << "Usage: ./test_classifier <tree1> <tree2> ..."
+              << std::endl;
+    return 0;
+  }
+
   // Init the classifier
   const int nTrees = argc-1;
   TreeT trees[nTrees];

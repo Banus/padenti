@@ -19,28 +19,27 @@
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp -march=native")
 
-include_directories(${OpenCV_INCLUDE_DIR} ${Boost_INCLUDE_DIRS} ${OpenCL_INCLUDE_DIR}
-                    ${PROJECT_SOURCE_DIR}/src ${PROJECT_BINARY_DIR}/kernels)
-link_directories(${Boost_LIBRARY_DIRS} ${OpenCL_LIBRARIES} ${OpenCL_LIBRARY_DIRS}
-                 ${PROJECT_SOURCE_DIR})
+include_directories(
+	${OpenCV_INCLUDE_DIR}
+	${Boost_INCLUDE_DIRS}
+	${OpenCL_INCLUDE_DIRS}
+    ${PROJECT_SOURCE_DIR}/src
+    ${PROJECT_SOURCE_DIR}/src/3rd_party
+    ${PROJECT_BINARY_DIR}/kernels
+)
 
-#TODO: manage as cmake option
-if (NVIDIA)
-  if (NVIDIA MATCHES "True")
-    include_directories ("${CMAKE_SOURCE_DIR}/nvidia_opencl_headers" ${INCLUDE_DIRS})
-  endif (NVIDIA MATCHES "True")
-endif (NVIDIA)
+set(TEST_LIBRARIES ${OpenCV_LIBS} ${Boost_RANDOM_LIBRARY} ${Boost_SYSTEM_LIBRARY} 
+	${Boost_FILESYSTEM_LIBRARY} ${Boost_CHRONO_LIBRARY} ${Boost_LOG_LIBRARY} ${OpenCL_LIBRARIES} pthread)
 
 
 #add_executable(test_training_set test_training_set.cpp)
 #target_link_libraries(test_training_set ${OpenCV_LIBS} ${Boost_RANDOM_LIBRARY} ${Boost_SYSTEM_LIBRARY} ${Boost_FILESYSTEM_LIBRARY})
 
 add_executable(test_tree_trainer test_tree_trainer.cpp)
-target_link_libraries(test_tree_trainer ${OpenCV_LIBS} ${Boost_RANDOM_LIBRARY} ${Boost_SYSTEM_LIBRARY} ${Boost_FILESYSTEM_LIBRARY} ${Boost_CHRONO_LIBRARY} ${Boost_LOG_LIBRARY} OpenCL pthread)
+target_link_libraries(test_tree_trainer ${TEST_LIBRARIES})
 
 add_executable(test_classifier test_classifier.cpp)
-target_link_libraries(test_classifier ${OpenCV_LIBS} ${Boost_RANDOM_LIBRARY} ${Boost_SYSTEM_LIBRARY} ${Boost_FILESYSTEM_LIBRARY} OpenCL)
+target_link_libraries(test_classifier ${TEST_LIBRARIES})
 
-install(TARGETS test_tree_trainer DESTINATION share/padenti/test)
-install(TARGETS test_classifier DESTINATION share/padenti/test)
+install(TARGETS test_tree_trainer test_classifier DESTINATION share/padenti/test)
 install(FILES ${PROJECT_SOURCE_DIR}/test/feature.cl DESTINATION share/padenti/test)
